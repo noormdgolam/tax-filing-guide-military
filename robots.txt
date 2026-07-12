@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://tax-filing-guide-military.bongshai.com/sitemap.xml
