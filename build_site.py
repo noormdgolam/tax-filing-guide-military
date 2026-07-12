@@ -159,6 +159,12 @@ header { background-color: var(--nav-bg); backdrop-filter: blur(10px); -webkit-b
 .key-takeaways h3 { margin-bottom: 0.5rem; font-size: 1.2rem; }
 .key-takeaways ul { margin-bottom: 0; }
 
+/* Glossary & Checklist Box */
+.content-box { background: var(--bg-color); border: 1px solid var(--border-color); padding: 2rem; border-radius: var(--border-radius); margin: 3rem 0; box-shadow: var(--shadow-sm); }
+.content-box h3 { border-bottom: 2px solid var(--accent-color); padding-bottom: 0.5rem; margin-bottom: 1.5rem; display: inline-block; }
+.checklist-item { display: flex; gap: 1rem; margin-bottom: 1rem; align-items: flex-start; }
+.checklist-icon { color: var(--success-color); font-weight: bold; font-size: 1.2rem; }
+
 /* Data Tables */
 table { width: 100%; border-collapse: collapse; margin: 2rem 0; box-shadow: var(--shadow-sm); }
 th, td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--border-color); }
@@ -321,9 +327,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('/sw.js').then(registration => {
-                console.log('SW registered: ', registration);
+                console.log('SW registered');
             }).catch(registrationError => {
-                console.log('SW registration failed: ', registrationError);
+                console.log('SW registration failed');
             });
         });
     }
@@ -543,6 +549,54 @@ def build_articles():
         url_path = f"/articles/{a['slug']}.html"
         full_url = f"{SITE_URL}{url_path}"
         
+        # Deep Dive Glossary & Actionable Checklist Content Expansion
+        glossary_terms = [
+            ("AGI (Adjusted Gross Income)", "Your total gross income minus specific deductions. Crucial for determining tax bracket."),
+            ("LES (Leave and Earnings Statement)", "The comprehensive monthly statement detailing your pay, deductions, and leave balances."),
+            ("DFAS (Defense Finance and Accounting Service)", "The agency responsible for managing military pay and tax forms like your W-2."),
+            ("SLR (State of Legal Residence)", "The state where you are registered to vote, pay taxes, and hold a driver's license, often different from your duty station.")
+        ]
+        
+        glossary_html = ""
+        for term, defi in glossary_terms:
+            glossary_html += f"<li><strong>{term}:</strong> {defi}</li>"
+            
+        checklist_items = [
+            "Gather all W-2s from DFAS and any civilian employers.",
+            "Verify your State of Legal Residence (SLR) on your LES.",
+            "Check for any combat zone tax exclusion (CZTE) months.",
+            "Review IRS Publication 3 (Armed Forces' Tax Guide) for recent rule changes.",
+            "Consult a VITA representative on base if you have complex filing needs."
+        ]
+        
+        checklist_html = ""
+        for item in checklist_items:
+            checklist_html += f"""
+            <div class="checklist-item">
+                <span class="checklist-icon">✓</span>
+                <p style="margin:0;">{item}</p>
+            </div>
+            """
+
+        expanded_sections = f"""
+        <h2 id="deep-dive">Deep Dive Analysis: Financial Implications</h2>
+        <p>When considering the financial implications of {a['title'].lower()}, it is essential to look beyond the surface level deductions. Many service members miss out on compounded tax benefits because they do not fully understand how specific military allowances interact with federal brackets.</p>
+        <p>For instance, because BAH (Basic Allowance for Housing) and BAS (Basic Allowance for Subsistence) are entirely tax-free, your Adjusted Gross Income (AGI) is artificially lowered. This lower AGI can push you into a more favorable tax bracket, making you eligible for additional civilian tax credits, such as the Earned Income Tax Credit (EITC) or the Child Tax Credit, which you might otherwise phase out of if those allowances were taxable.</p>
+        <p>Furthermore, understanding the timing of these benefits—such as filing for extensions during deployments or ensuring your state of legal residence is accurately reflected in DFAS—can prevent costly audits and ensure maximum return yields. Always cross-reference your LES with your W-2 before finalizing any returns.</p>
+        
+        <div class="content-box">
+            <h3 id="checklist">Actionable Checklist for {a['title']}</h3>
+            {checklist_html}
+        </div>
+        
+        <div class="content-box" style="background-color: #fff;">
+            <h3 id="glossary">Military Tax Glossary</h3>
+            <ul style="list-style-type: none; padding: 0;">
+                {glossary_html}
+            </ul>
+        </div>
+        """
+
         article_schema = {
             "@context": "https://schema.org",
             "@type": "Article",
@@ -654,6 +708,9 @@ def build_articles():
                             <li><a href="#what-is-it">What is this and how does it apply to military?</a></li>
                             <li><a href="#key-rules">Key Rules and Regulations</a></li>
                             <li><a href="#data-breakdown">Financial Impact & Data</a></li>
+                            <li><a href="#deep-dive">Deep Dive Analysis</a></li>
+                            <li><a href="#checklist">Actionable Checklist</a></li>
+                            <li><a href="#glossary">Military Tax Glossary</a></li>
                             <li><a href="#how-to-claim">How to Claim on Your Tax Return</a></li>
                             <li><a href="#faqs">Frequently Asked Questions</a></li>
                         </ul>
@@ -704,6 +761,8 @@ def build_articles():
                             </tr>
                         </tbody>
                     </table>
+                    
+                    {expanded_sections}
                     
                     <h2 id="how-to-claim">How to Claim on Your Tax Return</h2>
                     <p>When you sit down to file, whether you are using free military tax software like MilTax (offered via Military OneSource) or a commercial provider, you will need specific forms. Usually, your W-2 will have specific codes in Box 12 indicating military-specific tax statuses.</p>
@@ -951,7 +1010,7 @@ def main():
     generate_js()
     build_pwa()
     
-    print("Building pages with 10K/Day Scaling features...")
+    print("Building pages with massive SEO content expansion...")
     build_home()
     build_articles()
     build_categories()
@@ -961,7 +1020,7 @@ def main():
     build_sitemap_and_robots()
     build_rss()
     
-    print("Scaling site regeneration complete!")
+    print("Content expansion regeneration complete!")
 
 if __name__ == "__main__":
     main()
