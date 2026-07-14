@@ -41,6 +41,23 @@ ARTICLES = [
     {"slug": "audit-guide-military", "title": "What to Do If You Get Audited as a Service Member", "category": "basics"}
 ]
 
+states_list = [
+    "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", 
+    "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", 
+    "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", 
+    "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", 
+    "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", 
+    "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", 
+    "West Virginia", "Wisconsin", "Wyoming"
+]
+
+for st in states_list:
+    s_slug = st.lower().replace(" ", "-")
+    ARTICLES.append({"slug": f"{s_slug}-military-tax-guide", "title": f"{st} Military Tax Filing Basics", "category": "basics", "is_spun": True, "state": st, "topic": "tax basics"})
+    ARTICLES.append({"slug": f"state-taxes-active-duty-{s_slug}", "title": f"State Taxes for Active Duty Military in {st}", "category": "state-taxes", "is_spun": True, "state": st, "topic": "state taxes"})
+    ARTICLES.append({"slug": f"{s_slug}-reservist-tax-deductions", "title": f"{st} National Guard and Reservists Tax Deductions", "category": "deductions", "is_spun": True, "state": st, "topic": "reservist deductions"})
+
+
 CATEGORIES = {
     "basics": "Filing Basics",
     "deployment": "Deployment & Overseas",
@@ -550,52 +567,82 @@ def build_articles():
         full_url = f"{SITE_URL}{url_path}"
         
         # Deep Dive Glossary & Actionable Checklist Content Expansion
-        glossary_terms = [
-            ("AGI (Adjusted Gross Income)", "Your total gross income minus specific deductions. Crucial for determining tax bracket."),
-            ("LES (Leave and Earnings Statement)", "The comprehensive monthly statement detailing your pay, deductions, and leave balances."),
-            ("DFAS (Defense Finance and Accounting Service)", "The agency responsible for managing military pay and tax forms like your W-2."),
-            ("SLR (State of Legal Residence)", "The state where you are registered to vote, pay taxes, and hold a driver's license, often different from your duty station.")
-        ]
-        
-        glossary_html = ""
-        for term, defi in glossary_terms:
-            glossary_html += f"<li><strong>{term}:</strong> {defi}</li>"
+        if a.get("is_spun"):
+            st = a["state"]
+            tpc = a["topic"]
             
-        checklist_items = [
-            "Gather all W-2s from DFAS and any civilian employers.",
-            "Verify your State of Legal Residence (SLR) on your LES.",
-            "Check for any combat zone tax exclusion (CZTE) months.",
-            "Review IRS Publication 3 (Armed Forces' Tax Guide) for recent rule changes.",
-            "Consult a VITA representative on base if you have complex filing needs."
-        ]
-        
-        checklist_html = ""
-        for item in checklist_items:
-            checklist_html += f"""
-            <div class="checklist-item">
-                <span class="checklist-icon">✓</span>
-                <p style="margin:0;">{item}</p>
+            spin_intros = [
+                f"<p>Filing taxes while serving in the military presents unique challenges, especially when dealing with {tpc} in {st}. State laws frequently change, and military families must navigate complex residency rules. This guide provides a detailed breakdown of what you need to know about {st} regulations.</p>",
+                f"<p>For service members stationed in or claiming residency in {st}, understanding {tpc} is critical for financial readiness. The intersection of federal military benefits and {st} state tax codes can be confusing, but this comprehensive overview will clarify your filing requirements.</p>",
+                f"<p>Navigating {tpc} in {st} requires careful attention to both the Servicemembers Civil Relief Act (SCRA) and local state laws. Whether you are active duty, a reservist, or a military spouse, our in-depth analysis of {st} tax guidelines will ensure you maximize your deductions and stay compliant.</p>"
+            ]
+            
+            spin_details = [
+                f"<h2 id='what-is-it'>Understanding {st} Specifics</h2><p>In {st}, military personnel often find that their State of Legal Residence (SLR) dictates their tax liability rather than their physical duty station. When it comes to {tpc}, {st} has specific forms and exemptions that must be claimed correctly. Failing to file the correct non-resident or resident military forms can result in overpaying state taxes.</p><p>Furthermore, {st} treats combat pay and certain allowances (like BAH/BAS) according to federal guidelines, but specific state-level deductions may apply for National Guard members or those retiring within the state.</p>",
+                f"<h2 id='what-is-it'>How {st} Treats Military Income</h2><p>Military income in {st} is subject to a distinct set of rules. For matters concerning {tpc}, service members must differentiate between their active duty pay and any civilian income earned within {st}. Military spouses also benefit from the Military Spouse Residency Relief Act (MSRRA), which may exempt their income from {st} taxes if their SLR is elsewhere.</p><p>Always verify with the {st} Department of Revenue for the most up-to-date filing instructions regarding military exemptions, as these rules are subject to legislative changes.</p>"
+            ]
+            
+            spin_actions = [
+                f"<h2 id='how-to-claim'>How to File in {st}</h2><p>When preparing your return in {st}, ensure you have your W-2, LES, and any specific {st} military exemption forms. If you use tax software, indicate your military status clearly so the software can apply {st}-specific deductions for {tpc}.</p>",
+                f"<h2 id='how-to-claim'>Claiming Your Benefits in {st}</h2><p>To claim your benefits related to {tpc} in {st}, you must accurately report your residency status. Gather all documentation, including orders showing your duty station in {st} if applicable, and consult a VITA representative if you have questions about {st} tax schedules.</p>"
+            ]
+            
+            intro = random.choice(spin_intros)
+            details = random.choice(spin_details)
+            actions = random.choice(spin_actions)
+            
+            expanded_sections = f"{intro}{details}{actions}"
+            
+            glossary_html = ""
+            checklist_html = ""
+            
+        else:
+            glossary_terms = [
+                ("AGI (Adjusted Gross Income)", "Your total gross income minus specific deductions. Crucial for determining tax bracket."),
+                ("LES (Leave and Earnings Statement)", "The comprehensive monthly statement detailing your pay, deductions, and leave balances."),
+                ("DFAS (Defense Finance and Accounting Service)", "The agency responsible for managing military pay and tax forms like your W-2."),
+                ("SLR (State of Legal Residence)", "The state where you are registered to vote, pay taxes, and hold a driver's license, often different from your duty station.")
+            ]
+            
+            glossary_html = ""
+            for term, defi in glossary_terms:
+                glossary_html += f"<li><strong>{term}:</strong> {defi}</li>"
+                
+            checklist_items = [
+                "Gather all W-2s from DFAS and any civilian employers.",
+                "Verify your State of Legal Residence (SLR) on your LES.",
+                "Check for any combat zone tax exclusion (CZTE) months.",
+                "Review IRS Publication 3 (Armed Forces' Tax Guide) for recent rule changes.",
+                "Consult a VITA representative on base if you have complex filing needs."
+            ]
+            
+            checklist_html = ""
+            for item in checklist_items:
+                checklist_html += f"""
+                <div class="checklist-item">
+                    <span class="checklist-icon">✓</span>
+                    <p style="margin:0;">{item}</p>
+                </div>
+                """
+
+            expanded_sections = f"""
+            <h2 id="deep-dive">Deep Dive Analysis: Financial Implications</h2>
+            <p>When considering the financial implications of {a['title'].lower()}, it is essential to look beyond the surface level deductions. Many service members miss out on compounded tax benefits because they do not fully understand how specific military allowances interact with federal brackets.</p>
+            <p>For instance, because BAH (Basic Allowance for Housing) and BAS (Basic Allowance for Subsistence) are entirely tax-free, your Adjusted Gross Income (AGI) is artificially lowered. This lower AGI can push you into a more favorable tax bracket, making you eligible for additional civilian tax credits, such as the Earned Income Tax Credit (EITC) or the Child Tax Credit, which you might otherwise phase out of if those allowances were taxable.</p>
+            <p>Furthermore, understanding the timing of these benefits—such as filing for extensions during deployments or ensuring your state of legal residence is accurately reflected in DFAS—can prevent costly audits and ensure maximum return yields. Always cross-reference your LES with your W-2 before finalizing any returns.</p>
+            
+            <div class="content-box">
+                <h3 id="checklist">Actionable Checklist for {a['title']}</h3>
+                {checklist_html}
+            </div>
+            
+            <div class="content-box" style="background-color: #fff;">
+                <h3 id="glossary">Military Tax Glossary</h3>
+                <ul style="list-style-type: none; padding: 0;">
+                    {glossary_html}
+                </ul>
             </div>
             """
-
-        expanded_sections = f"""
-        <h2 id="deep-dive">Deep Dive Analysis: Financial Implications</h2>
-        <p>When considering the financial implications of {a['title'].lower()}, it is essential to look beyond the surface level deductions. Many service members miss out on compounded tax benefits because they do not fully understand how specific military allowances interact with federal brackets.</p>
-        <p>For instance, because BAH (Basic Allowance for Housing) and BAS (Basic Allowance for Subsistence) are entirely tax-free, your Adjusted Gross Income (AGI) is artificially lowered. This lower AGI can push you into a more favorable tax bracket, making you eligible for additional civilian tax credits, such as the Earned Income Tax Credit (EITC) or the Child Tax Credit, which you might otherwise phase out of if those allowances were taxable.</p>
-        <p>Furthermore, understanding the timing of these benefits—such as filing for extensions during deployments or ensuring your state of legal residence is accurately reflected in DFAS—can prevent costly audits and ensure maximum return yields. Always cross-reference your LES with your W-2 before finalizing any returns.</p>
-        
-        <div class="content-box">
-            <h3 id="checklist">Actionable Checklist for {a['title']}</h3>
-            {checklist_html}
-        </div>
-        
-        <div class="content-box" style="background-color: #fff;">
-            <h3 id="glossary">Military Tax Glossary</h3>
-            <ul style="list-style-type: none; padding: 0;">
-                {glossary_html}
-            </ul>
-        </div>
-        """
 
         article_schema = {
             "@context": "https://schema.org",
@@ -720,6 +767,8 @@ def build_articles():
                     <p>For service members and their families, military life brings unique financial situations. Whether it's dealing with permanent changes of station (PCS), deployments to combat zones, or navigating state residency rules, these factors significantly impact your tax liabilities.</p>
                     <p>This specific topic, {a['title']}, is one of the most common areas where military taxpayers have questions. Ensuring you have the right information can save you hundreds, if not thousands, of dollars.</p>
                     
+                    {expanded_sections}
+                    
                     <div class="ad-placeholder">
                         <!-- Google AdSense - In-Article -->
                         [AdSense Placeholder: In-Article Ad]
@@ -761,12 +810,6 @@ def build_articles():
                             </tr>
                         </tbody>
                     </table>
-                    
-                    {expanded_sections}
-                    
-                    <h2 id="how-to-claim">How to Claim on Your Tax Return</h2>
-                    <p>When you sit down to file, whether you are using free military tax software like MilTax (offered via Military OneSource) or a commercial provider, you will need specific forms. Usually, your W-2 will have specific codes in Box 12 indicating military-specific tax statuses.</p>
-                    <p>Always double-check your entries and consider consulting a Volunteer Income Tax Assistance (VITA) professional on your installation if you have complex issues.</p>
                     
                     <h2 id="faqs">Frequently Asked Questions</h2>
                     <div class="faq">
